@@ -5,7 +5,6 @@
  */
  
 #include <cs50.h>
-
 #include "helpers.h"
 
 bool binarySearch(int needle, int hayStack[], int first, int last);
@@ -27,7 +26,7 @@ bool binarySearch(int needle, int hayStack[], int first, int last) {
     
     // Base case of recursive function to test if len of array 
     // has reached 0 which means needle is not in array
-    if (last - first <= 0) {
+    if (last - first < 0) {
         return false;
     }
     
@@ -59,6 +58,29 @@ bool binarySearch(int needle, int hayStack[], int first, int last) {
  */
 void sort(int values[], int n)
 {
-    // TODO: implement an O(n^2) sorting algorithm
-    return;
+    int swaps = -1;
+    int tmp;
+    
+    // Exit while loop if no swaps have been made
+    while (swaps != 0) {
+        swaps = 0;
+        
+        for (int i = 0; i < n - 1; i++) {
+    
+            if (values[i] > values[i+1]) {
+                
+                // Swapping with temporary variable
+                tmp = values[i];
+                values[i] = values[i+1];
+                values[i+1] = tmp;
+                
+                // Increment swaps to indicate swap has been made
+                swaps++;
+            }
+            
+            else {
+                continue;
+            }
+        }
+    }
 }

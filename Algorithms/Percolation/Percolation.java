@@ -37,7 +37,7 @@ public class Percolation {
         site[gridSize + 1] = true;
     }
 
-    // Check if row or col arguments are within grid size
+    // check if row or col arguments are within grid size
     private void checkBounds(int row, int col) {
         if (row <= 0 || row > width) {
             throw new IndexOutOfBoundsException("Row index i out of bounds");
@@ -48,14 +48,14 @@ public class Percolation {
         }
     }
 
-    // Convert 2D array access to 1D
+    // return one-dimensional array index with two-dimensional array arguments
     private int xyTo1D(int i, int j) {
         int gridIndex = (i * width) - (width - j);
         return gridIndex;
 
     }
 
-    // Open site (row, col) if it is not opened already
+    // open site (row, col) if it is not opened already
     public void open(int row, int col) {
         checkBounds(row, col);
         int index = xyTo1D(row, col);
@@ -65,13 +65,12 @@ public class Percolation {
         }
 
         else {
-            // Figure out how to open site
             openSite(row, col, index);
             site[index] = true;
         }
     }
 
-    // At most 4 union calls to open site
+    // open surrounding sites (at most 4 union calls for a site)
     private void openSite(int row, int col, int index) {
         
         // join top index
@@ -126,12 +125,11 @@ public class Percolation {
     // return the number of open sites
     public int numberOfOpenSites() {
         int openSites = 0;
-        for (int i = 1; i < site.length; i++) {
+        for (int i = 1; i <= gridSize; i++) {
             if (site[i]) {
                 openSites++;
             }
         }
-
         return openSites;
     }
 
@@ -141,13 +139,14 @@ public class Percolation {
     }
 
     // Test client
-    public static void main(String args[]) {
-        Percolation test = new Percolation(3);
+/*    public static void main(String[] args) {
+        Percolation test = new Percolation(4);
         test.open(1, 2);
         test.open(2, 2);
         test.open(2, 3);
         test.open(3, 3);
+        System.out.println(test.numberOfOpenSites());
         boolean c = test.isFull(2, 3);
         System.out.println("Result: " + c);
-    }
+    }*/
 }

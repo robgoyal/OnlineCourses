@@ -139,4 +139,15 @@ public class Percolation {
     public boolean percolates() {
         return grid.connected(0, gridSize + 1);
     }
+
+    // Test client
+    public static void main(String args[]) {
+        Percolation test = new Percolation(3);
+        test.open(1, 2);
+        test.open(2, 2);
+        test.open(2, 3);
+        test.open(3, 3);
+        boolean c = test.isFull(2, 3);
+        System.out.println("Result: " + c);
+    }
 }

@@ -1,15 +1,12 @@
 /* Name: Deque.java
    Author: Robin Goyal
-   Last-Modified: May 18, 2017
+   Last-Modified: May 31, 2017
    Purpose: Implement a double ended queue
             using a linked list
 */
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.StdIn;
-import edu.princeton.cs.algs4.StdOut;
 
 public class Deque<Item> implements Iterable<Item> {
 
@@ -20,9 +17,9 @@ public class Deque<Item> implements Iterable<Item> {
 
     // Node class
     private class Node {
-        Item item;
-        Node next;
-        Node prev;
+        private Item item;
+        private Node next;
+        private Node prev;
     }
 
     // Construct an empty deque 
@@ -150,14 +147,14 @@ public class Deque<Item> implements Iterable<Item> {
         }
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Deque<Integer> test = new Deque<Integer>();
         for (int i = 0; i <= 10; i++) {
             test.addFirst(i + 5);
             test.addLast(i + 15);
         }
 
-        for (int i = 0; i <= 8; i++) {
+        for (int i = 0; i <= 10; i++) {
             test.removeLast();
             test.removeFirst();
         }

@@ -101,7 +101,40 @@ def quote():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user."""
-    return apology("TODO")
+    
+    # if user submitted form (registration page)
+    if request.method == "POST":
+        
+        # retrieve form fields info
+        username = request.form.get("username")
+        password = request.form.get("password")
+        checkPass = request.form.get("passwordCheck")
+        
+        # ensure username was submitted
+        if not username:
+            return apology("Username is blank")
+        
+        # ensure password fields were submitted
+        elif not password or not checkPass:
+            return apology("Password field left blank")
+            
+        # ensure both password fields are same
+        elif (password != checkPass):
+            return apology("Passwords do not match")
+        
+        # create password hash
+        hashpwd = pwd_context.hash(password)
+        
+        # Add new user to database
+        db.execute("INSERT INTO users (username, hash) VALUES (:name, :hashpwd)", name=username, hashpwd=hashpwd)
+        
+        # TO-DO: Redirect to new registered page
+        # CURRENTLY ONLY REDIRECTS TO LOGIN 
+        return redirect(url_for("login"))
+    
+    # Return registration page if accessed via GET    
+    else:
+        return render_template("register.html")
 
 @app.route("/sell", methods=["GET", "POST"])
 @login_required

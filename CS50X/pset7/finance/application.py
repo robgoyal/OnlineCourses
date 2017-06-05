@@ -39,7 +39,68 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock."""
-    return apology("TODO")
+    
+    # Return page to buy shares
+    if request.method == "GET":
+        return render_template("buy.html")
+    
+    # Form was submitted
+    elif request.method == "POST":
+        
+        # Empty symbol input 
+        if not request.form.get("symbol"):
+            return apology("Missing Symbol")
+        
+        # Lookup stock information
+        stock = lookup(request.form.get("symbol"))
+        name = stock['name']
+        symbol = stock['symbol']
+        price = stock['price']
+        
+        # Symbol didn't exist
+        if stock == None:
+            return apology("Invalid Symbol")
+        
+        # Shares form input
+        shares = request.form.get("shares")
+        
+        # Empty shares input
+        if not request.form.get("shares"):
+            return apology("Missing shares")
+            
+        # Check if input contained digits only
+        if not (shares.isdigit()):
+            return apology("Only Numbers Allowed")
+
+        # Convert shares to int
+        shares = int(shares)
+        
+        # Check if shares is non-negative
+        if shares < 0:
+            return apology("Negative shares not allowed")
+        
+        # Return user's current cash
+        cash = db.execute("SELECT cash FROM users WHERE id=:uid", uid=session['user_id'])
+        
+        
+        # Calculate purchase amount
+        purchase = shares * price
+        
+        # Check if user has enough cash
+        if (purchase > cash[0]['cash']):
+            return apology("Not Enough Cash!")
+        else:
+            
+            # Enter transaction history
+            db.execute("INSERT INTO transactions (id, symbol, shares, price) VALUES \
+                    (:uid, :symbol, :shares, :price)", uid = session['user_id'], \
+                    symbol=symbol, shares = shares, price = price)
+            
+            # Update users cash
+            db.execute("UPDATE users SET cash=:cash WHERE id=:uid",\
+                        cash = cash[0]['cash'] - purchase, uid=session['user_id'])
+                        
+        return redirect(url_for("index"))
 
 @app.route("/history")
 @login_required

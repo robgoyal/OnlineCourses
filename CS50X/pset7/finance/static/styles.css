@@ -24,6 +24,9 @@
     color: #2e944b;
 }
 
+.navbar-default {
+    margin-bottom: 40px !important;
+}
 main .form-control
 {
     /* center form controls */
@@ -43,4 +46,48 @@ main td
 {
     /* left-align tables' cells */
     text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table {
+    width: 100%;
+    empty-cells:show;
+}
+
+tr {
+    border-top: 1px solid #f9f9f9;
+}
+
+th {
+    border-bottom: 2px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+}
+
+body {
+    font-family: "Helvetica Nueue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
+#Total {
+    font-weight: bold;
+    border-top: 2px solid #ddd
+}
+
+.password{
+    line-height:1em;
+    font-size:20px;
+}
+
+.password:after {
+    content: ' ';
+    display:block;
+    border:2px solid black;
+    margin-bottom: 20px;
 }

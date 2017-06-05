@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    CS50 Finance: Settings
+{% endblock %}
+
+{% block main %}
+
+    <h3 class="text-left"><span class="password">Change Password</span></h3>
+    
+    <form action="{{ url_for('account') }}" method="post">
+        <fieldset>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="oldpass" placeholder="Old Password" type="password"/>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="newpass" placeholder="New Password" type="password"/>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="newpassCheck" placeholder="Re-Enter New Password"/ type="password">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default" type="submit">Save Settings</button>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}

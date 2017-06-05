@@ -67,6 +67,50 @@ def index():
     # Return index file with assets and total cash as parameters
     return render_template("index.html", rows=assets, total=usd(total))
 
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    
+    # Return settings page if accessed via GET
+    if request.method == "GET":
+        return render_template("account.html")
+    
+    # Form submitted
+    elif request.method == "POST":
+        
+        # Store form fields
+        oldPass = request.form.get("oldpass")
+        newPass = request.form.get("newpass")
+        checkPass = request.form.get("newpassCheck")
+        
+        # Get original password
+        rows = db.execute("SELECT hash FROM users WHERE id=:uid", uid=session['user_id'])
+        
+        # Verify if any fields are blank
+        if not (oldPass and newPass and checkPass):
+            return apology("Field left blank")
+        
+        # Verify if old passwords match
+        elif not pwd_context.verify(oldPass, rows[0]['hash']):
+            return apology("Old Password doesn't match")
+    
+        # Verify new passwords match
+        elif (newPass != checkPass):
+            return apology("New password's don't match!")
+        
+        # Verify new password isn't same as old password
+        elif (oldPass == newPass and oldPass == checkPass):
+            return apology("New password must be different")
+        
+        # Hash new password and update database for sure
+        hashpwd = pwd_context.hash(newPass)
+        result = db.execute("UPDATE users SET hash=:hashpwd WHERE id=:uid",
+                    hashpwd=hashpwd, uid=session['user_id'])
+        
+        # Redirect to homepage and flash message
+        flash("Settings Saved!")
+        return redirect(url_for("index"))
+        
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():

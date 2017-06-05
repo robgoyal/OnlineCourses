@@ -16,7 +16,7 @@
             <tr>
                 <td>{{ row['symbol'] |e }} </td>
                 <td>{{ row['shares'] |e }} </td>
-                <td>{{ row['price'] |e }} </td>
+                <td>{{ row['price'] |usd }} </td>
                 <td>{{ row['date'] |e }} </td>
             </tr>
         {% endfor %}

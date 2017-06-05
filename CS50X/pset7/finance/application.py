@@ -1,3 +1,8 @@
+# Name: application.py
+# Author: Robin Goyal
+# Last-Modified: June 5, 2017
+# Purpose: Create a fictional financial portfolio
+
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_session import Session

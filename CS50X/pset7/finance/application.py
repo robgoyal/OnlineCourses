@@ -231,4 +231,73 @@ def register():
 @login_required
 def sell():
     """Sell shares of stock."""
-    return apology("TODO")
+    
+    # Return page to sell shares
+    if request.method == "GET":
+        return render_template("sell.html")
+    
+    # Form was submitted
+    elif request.method == "POST":
+        
+        # Get stock and symbol information
+        symbol = request.form.get("symbol")
+        stock = lookup(symbol)
+        name = stock['name']
+        price = stock['price']
+        
+        # Empty symbol input check
+        if not symbol:
+            return apology("Missing Symbol")
+        
+        # Check if symbol exists
+        if stock == None:
+            return apology("Symbol doesn't exist")
+        
+        # Check if user owns shares of stock
+        rows = db.execute("SELECT * FROM transactions WHERE symbol=:symbol AND id=:uid",\
+                    symbol=symbol, uid=session['user_id'])
+        if len(rows) == 0:
+            return apology("Not owned")
+        
+        
+        shares = request.form.get("shares")
+        
+        # Empty shares input check
+        if not shares:
+            return apology("Missing shares field")
+        
+        # Negative shares and integer characters input check
+        if (int(shares) < 0):
+            return apology("Negative shares not allowed")
+            
+        if not (shares.isdigit()):
+            return apology("Only Numbers allowed")
+        
+        
+        shares = int(shares)
+        
+        # Verify the user has enough shares to sell
+        heldShares = 0
+        
+        for row in rows:
+            heldShares += row['shares']
+        if shares > heldShares:
+            return apology("Too many shares")
+        
+        else:
+            sell = shares * price
+            
+            # Retreive current cash amount
+            cash = db.execute("SELECT cash FROM users WHERE id=:uid", uid=session['user_id'])
+            
+            # Insert transaction
+            db.execute("INSERT INTO transactions(id, symbol, shares, price) VALUES \
+                    (:uid, :symbol, :shares, :price)", uid = session['user_id'], \
+                    symbol = symbol, shares = -shares, price = price)
+            
+            # Update users cash field
+            db.execute("UPDATE users SET cash=:cash WHERE id=:uid",
+                        cash = cash[0]['cash'] + sell, uid=session['user_id'])
+        
+        # Redirect user to homepage
+        return redirect(url_for("index"))

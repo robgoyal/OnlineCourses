@@ -150,11 +150,17 @@ def register():
         hashpwd = pwd_context.hash(password)
         
         # Add new user to database
-        db.execute("INSERT INTO users (username, hash) VALUES (:name, :hashpwd)", name=username, hashpwd=hashpwd)
+        result = db.execute("INSERT INTO users (username, hash) VALUES (:name, :hashpwd)", name=username, hashpwd=hashpwd)
+
+        if not result:
+            return apology("Username already exists")
+
+        # Get user ID and store session
+        rows = db.execute("SELECT * FROM users WHERE username = :username", username = request.form.get("username"))
+        session["user_id"] = rows[0]["id"]
         
-        # TO-DO: Redirect to new registered page
-        # CURRENTLY ONLY REDIRECTS TO LOGIN 
-        return redirect(url_for("login"))
+        # Redirect user to index page instantly logging them in
+        return redirect(url_for("index"))
     
     # Return registration page if accessed via GET    
     else:

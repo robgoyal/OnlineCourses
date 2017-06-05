@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    CS50 Finance: Portfolio
+{% endblock %}
+
+{% block main %}
+    <table>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>TOTAL</th>
+        </tr>
+        {% for row in rows %}
+            <tr>
+                <td>{{ row['symbol'] | e }}</td>
+                <td>{{ row['name'] | e }}</td>
+                <td>{{ row['shares'] | e }}</td>
+                <td>{{ row['price'] | e }} </td>
+                <td>{{ row['total'] | e }}</td>
+            </tr>
+        {% endfor %}
+        <tr id="Total">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{ total | e}}</td>
+        </tr>
+    </table>
+{% endblock %}

@@ -33,7 +33,39 @@ db = SQL("sqlite:///finance.db")
 @app.route("/")
 @login_required
 def index():
-    return apology("TODO")
+    """Display a user's current assets"""
+    
+    # Store assets and total 
+    assets = []
+    total = 0
+    
+    # Retrieve rows with user symbols and sum of shares grouped
+    rows = db.execute("SELECT symbol, sum(shares) as shares FROM transactions WHERE id=:uid GROUP BY symbol", uid=session['user_id'])
+    
+    for row in rows:
+        
+        # Ensure user owns shares of stock
+        if row['shares'] != 0:
+            
+            stock = lookup(row['symbol'])
+            row['name'] = stock['name']
+            row['price'] = usd(stock['price'])
+            
+            # Calculate current value of shares
+            amount = stock['price'] * row['shares']
+            total += amount
+            row['total'] = usd(amount)
+            assets.append(row)
+        
+    # Current cash user owns
+    cash = db.execute("SELECT cash FROM users WHERE id=:uid", uid=session['user_id'])
+    assets.append({'symbol': 'CASH', 'total': usd(cash[0]['cash']), 'price': '', 'name': '', 'shares': '' })
+    
+    # Calculate total value of assets
+    total += cash[0]['cash']
+    
+    # Return index file with assets and total cash as parameters
+    return render_template("index.html", rows=assets, total=usd(total))
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
@@ -47,7 +79,7 @@ def buy():
     # Form was submitted
     elif request.method == "POST":
         
-        # Empty symbol input 
+        # Empty symbol input check
         if not request.form.get("symbol"):
             return apology("Missing Symbol")
         
@@ -99,9 +131,10 @@ def buy():
             # Update users cash
             db.execute("UPDATE users SET cash=:cash WHERE id=:uid",\
                         cash = cash[0]['cash'] - purchase, uid=session['user_id'])
-                        
+        
+        flash("Bought!")                
         return redirect(url_for("index"))
-
+        
 @app.route("/history")
 @login_required
 def history():
@@ -213,15 +246,17 @@ def register():
         
         # Add new user to database
         result = db.execute("INSERT INTO users (username, hash) VALUES (:name, :hashpwd)", name=username, hashpwd=hashpwd)
-
+        
+        # Check if username exists
         if not result:
             return apology("Username already exists")
-
+        
         # Get user ID and store session
-        rows = db.execute("SELECT * FROM users WHERE username = :username", username = request.form.get("username"))
+        rows = db.execute("SELECT * FROM users WHERE username = :username", username=request.form.get("username"))
         session["user_id"] = rows[0]["id"]
         
-        # Redirect user to index page instantly logging them in
+        # Redirect user to index page instantly logging them in and flash message
+        flash("Registered!")
         return redirect(url_for("index"))
     
     # Return registration page if accessed via GET    
@@ -300,5 +335,6 @@ def sell():
             db.execute("UPDATE users SET cash=:cash WHERE id=:uid",
                         cash = cash[0]['cash'] + sell, uid=session['user_id'])
         
-        # Redirect user to homepage
+        # Redirect user to homepage and flash message
+        flash("Sold!")
         return redirect(url_for("index"))

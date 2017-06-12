@@ -63,15 +63,15 @@ $(function() {
  */
 function addMarker(place)
 {
-    // TODO
-    var marker = new google.maps.Marker({
+    //TODO
+    var marker = new MarkerWithLabel({
         position: {lat: place.latitude, lng: place.longitude},
         map: map, 
         icon: "http://maps.google.com/mapfiles/kml/pal2/icon23.png",
-        label: place.place_name + ", " + place.admin_name1
+        labelContent: place.place_name + ", " + place.admin_name1,
+        labelAnchor: new google.maps.Point(75, -10),
+        labelClass: "label"
     });
-    
-    var temp; 
     
     var parameters = {
         geo: place.postal_code
@@ -80,11 +80,13 @@ function addMarker(place)
     marker.addListener('click', temp = function getArray() {
         return $.getJSON(Flask.url_for("articles"), parameters).done(
             function(data) {
-                console.log(data[0]['link']);
+                //console.log(data[0]['link']);
                 var items = [];
                 items.push("<ul>");
-                $.each(data, function(link, title) {
-                    items.push("<li><a href=" + link['link'] + ">" + title['title'] + "</li>");
+                $.each(data, function(iter) {
+                    //console.log(link['link']);
+                    //console.log(data[iter]['link']);
+                    items.push("<li><a href=" + data[iter]['link'] + " target='_blank'>" + data[iter]['title'] + "</li>");
                 });
                 items.push("</ul>");
                 //console.log(items);
@@ -95,23 +97,6 @@ function addMarker(place)
     });
     
     markers.push(marker);
-    
-    // temp().done(function(data) {
-        
-    //     console.log(data);
-    //     var items = [];
-    //     items.push("<ul>");
-    //     $.each(data, function(key, val) {
-    //         items.push("<li><a href=" + key + ">" + val + "</li>");
-    //     });
-    //     items.push("</ul>");
-    //     //console.log(items);
-    //     results = items.join("");
-    //     //console.log(results);
-    //     showInfo(marker, results);
-    // });
-    
-    // markers.push(marker);
 }
 
 /**
@@ -147,7 +132,7 @@ function configure()
         templates: {
             suggestion: Handlebars.compile(
                 "<div>" +
-                "{{place_name}}, {{admin_name1}}, {{postal_code}}" + // FIX EXTRA COMMA
+                "{{place_name}}, {{admin_name1}}, {{postal_code}}" +
                 "</div>"
             )
         }
@@ -189,6 +174,11 @@ function configure()
 function removeMarkers()
 {
     // TODO
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    
+    markers = [];
 }
 
 /**
@@ -264,11 +254,10 @@ function update()
 
        // remove old markers from map
        removeMarkers();
-
+    
        // add new markers to map
        for (var i = 0; i < data.length; i++)
        {
-           console.log(data[i]);
            addMarker(data[i]);
        }
     })

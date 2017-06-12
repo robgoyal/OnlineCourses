@@ -35,8 +35,10 @@ def articles():
     
     # Return parameter field for get request
     geo = request.args.get("geo")
-    
-    return jsonify(lookup(geo))
+    if not geo:
+        raise RuntimeError("Geo Parameter Missing")
+        
+    return jsonify(lookup(geo)[0:5])
 
 @app.route("/search")
 def search():
@@ -61,7 +63,7 @@ def search():
     rows = db.execute("SELECT * FROM places WHERE (postal_code LIKE :code) OR \
                 (place_name LIKE :city)", code = postal_code, city = city)
     
-    return jsonify(rows)
+    return jsonify(rows[0:10])
 
 @app.route("/update")
 def update():
@@ -107,4 +109,4 @@ def update():
             sw_lat=sw_lat, ne_lat=ne_lat, sw_lng=sw_lng, ne_lng=ne_lng)
 
     # output places as JSON
-    return jsonify(rows)
+    return jsonify(rows[0:10])

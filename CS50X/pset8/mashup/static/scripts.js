@@ -37,7 +37,7 @@ $(function() {
     // options for map
     // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     var options = {
-        center: {lat: 37.4236, lng: -122.1619}, // Stanford, California
+        center: {lat: 42.3770, lng: -71.1256}, // Stanford, California
         disableDefaultUI: true,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         maxZoom: 14,
@@ -64,6 +64,54 @@ $(function() {
 function addMarker(place)
 {
     // TODO
+    var marker = new google.maps.Marker({
+        position: {lat: place.latitude, lng: place.longitude},
+        map: map, 
+        icon: "http://maps.google.com/mapfiles/kml/pal2/icon23.png",
+        label: place.place_name + ", " + place.admin_name1
+    });
+    
+    var temp; 
+    
+    var parameters = {
+        geo: place.postal_code
+    };
+    
+    marker.addListener('click', temp = function getArray() {
+        return $.getJSON(Flask.url_for("articles"), parameters).done(
+            function(data) {
+                console.log(data[0]['link']);
+                var items = [];
+                items.push("<ul>");
+                $.each(data, function(link, title) {
+                    items.push("<li><a href=" + link['link'] + ">" + title['title'] + "</li>");
+                });
+                items.push("</ul>");
+                //console.log(items);
+                results = items.join("");
+                //console.log(results);
+                showInfo(marker, results);
+            }); 
+    });
+    
+    markers.push(marker);
+    
+    // temp().done(function(data) {
+        
+    //     console.log(data);
+    //     var items = [];
+    //     items.push("<ul>");
+    //     $.each(data, function(key, val) {
+    //         items.push("<li><a href=" + key + ">" + val + "</li>");
+    //     });
+    //     items.push("</ul>");
+    //     //console.log(items);
+    //     results = items.join("");
+    //     //console.log(results);
+    //     showInfo(marker, results);
+    // });
+    
+    // markers.push(marker);
 }
 
 /**
@@ -99,7 +147,7 @@ function configure()
         templates: {
             suggestion: Handlebars.compile(
                 "<div>" +
-                "TODO" +
+                "{{place_name}}, {{admin_name1}}, {{postal_code}}" + // FIX EXTRA COMMA
                 "</div>"
             )
         }
@@ -220,6 +268,7 @@ function update()
        // add new markers to map
        for (var i = 0; i < data.length; i++)
        {
+           console.log(data[i]);
            addMarker(data[i]);
        }
     })

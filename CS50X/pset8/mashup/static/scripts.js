@@ -63,7 +63,8 @@ $(function() {
  */
 function addMarker(place)
 {
-    //TODO
+    
+    // Create new marker using markerwithlabel.js to orient label beneat marker
     var marker = new MarkerWithLabel({
         position: {lat: place.latitude, lng: place.longitude},
         map: map, 
@@ -73,29 +74,31 @@ function addMarker(place)
         labelClass: "label"
     });
     
+    // Create article search parameter
     var parameters = {
         geo: place.postal_code
     };
     
+    // Create listener function for marker click to display articles
     marker.addListener('click', temp = function getArray() {
         return $.getJSON(Flask.url_for("articles"), parameters).done(
             function(data) {
-                //console.log(data[0]['link']);
-                var items = [];
-                items.push("<ul>");
+
+            	// Parse JSON data to create unordered list of new articles
+                var articles = [];
+                articles.push("<ul>");
                 $.each(data, function(iter) {
-                    //console.log(link['link']);
-                    //console.log(data[iter]['link']);
-                    items.push("<li><a href=" + data[iter]['link'] + " target='_blank'>" + data[iter]['title'] + "</li>");
+                    articles.push("<li><a href=" + data[iter]['link'] + " target='_blank'>" + data[iter]['title'] + "</li>");
                 });
-                items.push("</ul>");
-                //console.log(items);
-                results = items.join("");
-                //console.log(results);
-                showInfo(marker, results);
+                articles.push("</ul>");
+
+                /* Call showInfo function to open info window tab 
+                on marker passing in articles content */
+                showInfo(marker, articles.join(""));
             }); 
     });
     
+    // Push marker to marker array 
     markers.push(marker);
 }
 
@@ -131,6 +134,8 @@ function configure()
         source: search,
         templates: {
             suggestion: Handlebars.compile(
+
+            	// Display city, state, postal code in search results
                 "<div>" +
                 "{{place_name}}, {{admin_name1}}, {{postal_code}}" +
                 "</div>"
@@ -173,11 +178,12 @@ function configure()
  */
 function removeMarkers()
 {
-    // TODO
+    // Remove all markers from map
     for (var i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
     }
     
+    // Clear markers array
     markers = [];
 }
 

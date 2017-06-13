@@ -30,11 +30,11 @@ public class Term implements Comparable<Term> {
 
     // Compares the two terms in descending order by weight
     public static Comparator<Term> byReverseWeightOrder = new Comparator<Term>() {
-    
+        
         @Override
-        public int compare(final Term a, final Term b) {
+        public int compare(Term a, Term b) {
             if (a.weight == b.weight) return 0;
-            return (a.weight > b.weight) ? 1 : -1;
+            return (a.weight > b.weight) ? -1 : 1;
         }
     };
 
@@ -50,7 +50,7 @@ public class Term implements Comparable<Term> {
             this.r = r;
         }
 
-        public int compare(final Term a, final Term b) {
+        public int compare(Term a, Term b) {
 
             // Normal compareTo on queries of size less than r
             if (a.query.length() <= r && b.query.length() <= r) {
@@ -83,13 +83,6 @@ public class Term implements Comparable<Term> {
     // format: the weight, followed by a tab, followed by the query
     public String toString() {
         return this.weight + "\t" + this.query;
-    }
-
-    // Unit Testing
-    public static void main(String[] args) {
-        Term a = new Term("test", 10);
-        Term b = new Term("testimonial", 10);
-        System.out.println(byReverseWeightOrder.compare(a,b));
     }
 
 }

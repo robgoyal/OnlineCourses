@@ -48,9 +48,15 @@ public class Autocomplete {
     }
 
     // Returns the number of terms that start with the given prefix
-    /*public int numberOfMatches(String prefix) {
-        
-    }*/
+    public int numberOfMatches(String prefix) {
+        Term temp = new Term(prefix, 0);
+        Term.byPrefixOrder comparator = new Term.byPrefixOrder(prefix.length());
+
+        int first = BinarySearchDeluxe.firstIndexOf(terms, temp, comparator);
+        int last = BinarySearchDeluxe.lastIndexOf(terms, temp, comparator);
+
+        return last - first + 1;
+    }
 
     // Unit Testing
     public static void main(String[] args) {
@@ -67,15 +73,17 @@ public class Autocomplete {
             terms[i] = new Term(query, weight);
         }
 
-        int k = Integer.parseInt(args[1]);
+        //int k = Integer.parseInt(args[1]);
         Autocomplete autocomplete = new Autocomplete(terms);
 
-        while(StdIn.hasNextLine()) {
+        /*while(StdIn.hasNextLine()) {
             String prefix = StdIn.readLine();
             Term[] results = autocomplete.allMatches(prefix);
             for (int i = 0; i < Math.min(k, results.length); i++) {
                 StdOut.println(results[i]);
             }
-        }
+        }*/
+
+        System.out.println(autocomplete.numberOfMatches("Bo"));
     }   
 }

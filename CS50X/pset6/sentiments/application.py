@@ -57,9 +57,11 @@ def search():
             neutral += 1
         
     # Set sentiment analysis counts to percentages
-    positive = positive / 100
-    negative = negative / 100
-    neutral = neutral / 100
+    num_tweets = positive + negative + neutral
+
+    positive = positive / num_tweets
+    negative = negative / num_tweets
+    neutral = neutral / num_tweets
 
     # generate chart
     chart = helpers.chart(positive, negative, neutral)

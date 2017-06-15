@@ -4,6 +4,8 @@
 
 The purpose of the application was to create a website that allows users to search for articles atop of a map location. 
 
+![Mashup Example](img/mashup.png)
+
 The base file included most of the code for setting up google maps api, grabbing data from google news, and finding 10 locations within the current view of the map. 
 
 ### Procedure

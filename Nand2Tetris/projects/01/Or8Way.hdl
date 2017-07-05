@@ -13,5 +13,17 @@ CHIP Or8Way {
     OUT out;
 
     PARTS:
-    // Put your code here:
+
+    // The following 4 statements analyze each set of 2 bits
+    Or(a = in[0], b = in[1], out = OR2Bit1);
+    Or(a = in[2], b = in[3], out = OR2Bit2);
+    Or(a = in[4], b = in[5], out = OR2Bit3);
+    Or(a = in[6], b = in[7], out = OR2Bit4);
+
+    // The following 2 statements analyze 2 sets of the 2 bit ORs
+    Or(a = OR2Bit1, b = OR2Bit2, out = OR4Bit1);
+    Or(a = OR2Bit3, b = OR2Bit4, out = OR4Bit2);
+
+    // The next statement ends up analyzing all 8 bits
+    Or(a = OR4Bit1, b = OR4Bit2, out = out);
 }

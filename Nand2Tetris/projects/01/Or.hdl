@@ -14,5 +14,9 @@ CHIP Or {
     OUT out;
 
     PARTS:
-    // Put your code here:
+    
+    /* Constructed from NOT and NAND gates */
+    Not(in = a, out = NOTa);
+    Not(in = b, out = NOTb);
+    Nand(a = NOTa, b = NOTb, out = out);
 }

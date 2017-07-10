@@ -42,5 +42,31 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+
+        // Operations to determine the outut
+        Mux16(a = x, b = false, sel = zx, out = zxOUT);
+        Mux16(a = y, b = false, sel = zy, out = zyOUT);
+        Not16(in = zxOUT, out = NOTzxOUT);
+        Not16(in = zyOUT, out = NOTzyOUT);
+        Mux16(a = zxOUT, b = NOTzxOUT, sel = nx, out = nxOUT);
+        Mux16(a = zyOUT, b = NOTzyOUT, sel = ny, out = nyOUT);
+        And16(a = nxOUT, b = nyOUT, out = nxANDny);
+        Add16(a = nxOUT, b = nyOUT, out = nxADDny);
+        Mux16(a = nxANDny, b = nxADDny, sel = f, out = fOUT);
+        Not16(in = fOUT, out = NOTfOUT);
+
+        /* This MUX outputs the main value from the above operations but
+           it also outputs values that are used in the calculations for 
+           the control status */
+        Mux16(a = fOUT, b = NOTfOUT, sel = no, out = out, out[0..7] = zeroCheck1, 
+            out[8..15] = zeroCheck2, out[15] = negCheck);
+
+        // ZR control output: Output 1 if out is zero, else output is 0
+        Or8Way(in = zeroCheck1, out = OR8BIT1);
+        Or8Way(in = zeroCheck2, out = OR8BIT2);
+        Or(a = OR8BIT1, b = OR8BIT2, out = OR16BIT);
+        Not(in = OR16BIT, out = zr);
+
+        // NG control output: Output 1 if out is negative, else output is 0
+        And(a = negCheck, b = true, out = ng);
 }

@@ -15,5 +15,22 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    
+    // Initialize Registers
+    Register(in = in, load = reg0, out = reg0OUT);
+    Register(in = in, load = reg1, out = reg1OUT);
+    Register(in = in, load = reg2, out = reg2OUT);
+    Register(in = in, load = reg3, out = reg3OUT);
+    Register(in = in, load = reg4, out = reg4OUT);
+    Register(in = in, load = reg5, out = reg5OUT);
+    Register(in = in, load = reg6, out = reg6OUT);
+    Register(in = in, load = reg7, out = reg7OUT);
+
+    // Combinational logic for Register to write to
+    DMux8Way(in = load, sel = address, a = reg0, b = reg1, c = reg2, d = reg3,
+            e = reg4, f = reg5, g = reg6, h = reg7);
+
+    // Combinational logic for Register to read from
+    Mux8Way16(a = reg0OUT, b = reg1OUT, c = reg2OUT, d = reg3OUT, e = reg4OUT,
+            f = reg5OUT, g = reg6OUT, h = reg7OUT, sel = address, out = out);
 }

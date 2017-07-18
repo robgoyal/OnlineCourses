@@ -15,5 +15,23 @@ CHIP RAM64 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+
+    // Initialize RAM8 Chips
+    RAM8(in = in, load = ram8One, address = address[0..2], out = ram8OneOut);
+    RAM8(in = in, load = ram8Two, address = address[0..2], out = ram8TwoOut);
+    RAM8(in = in, load = ram8Three, address = address[0..2], out = ram8ThreeOut);
+    RAM8(in = in, load = ram8Four, address = address[0..2], out = ram8FourOut);
+    RAM8(in = in, load = ram8Five, address = address[0..2], out = ram8FiveOut);
+    RAM8(in = in, load = ram8Six, address = address[0..2], out = ram8SixOut);
+    RAM8(in = in, load = ram8Seven, address = address[0..2], out = ram8SevenOut);
+    RAM8(in = in, load = ram8Eight, address = address[0..2], out = ram8EightOut);
+
+    // Combinational logic to choose RAM8 to write to
+    DMux8Way(in = load, sel = address[3..5], a = ram8One, b = ram8Two, c = ram8Three,
+        d = ram8Four, e = ram8Five, f = ram8Six, g = ram8Seven, h = ram8Eight);
+
+    // Combinational logic to choose RAM8 to read from
+    Mux8Way16(a = ram8OneOut, b = ram8TwoOut, c = ram8ThreeOut, d = ram8FourOut,
+        e = ram8FiveOut, f = ram8SixOut, g = ram8SevenOut, h = ram8EightOut,
+        sel = address[3..5], out = out);
 }

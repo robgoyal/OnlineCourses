@@ -15,5 +15,24 @@ CHIP RAM512 {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    
+    // Initialize RAM64 Chips
+    RAM64(in = in, load = ram64One, address = address[0..5], out = ram64OneOut);
+    RAM64(in = in, load = ram64Two, address = address[0..5], out = ram64TwoOut);
+    RAM64(in = in, load = ram64Three, address = address[0..5], out = ram64ThreeOut);
+    RAM64(in = in, load = ram64Four, address = address[0..5], out = ram64FourOut);
+    RAM64(in = in, load = ram64Five, address = address[0..5], out = ram64FiveOut);
+    RAM64(in = in, load = ram64Six, address = address[0..5], out = ram64SixOut);
+    RAM64(in = in, load = ram64Seven, address = address[0..5], out = ram64SevenOut);
+    RAM64(in = in, load = ram64Eight, address = address[0..5], out = ram64EightOut);
+
+    // Combinational logic to choose RAM64 to write to
+    DMux8Way(in = load, sel = address[6..8], a = ram64One, b = ram64Two, c = ram64Three,
+        d = ram64Four, e = ram64Five, f = ram64Six, g = ram64Seven, h = ram64Eight);
+
+    // Combinational logic to choose RAM64 to read from
+    Mux8Way16(a = ram64OneOut, b = ram64TwoOut, c = ram64ThreeOut, d = ram64FourOut,
+        e = ram64FiveOut, f = ram64SixOut, g = ram64SevenOut, h = ram64EightOut,
+        sel = address[6..8], out = out);
+
 }

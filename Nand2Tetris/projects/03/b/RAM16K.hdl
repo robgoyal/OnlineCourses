@@ -15,5 +15,18 @@ CHIP RAM16K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    
+    // Initialize RAM4K Chips
+    RAM4K(in = in, load = chipOne, address = address[0..11], out = chipOneOut);
+    RAM4K(in = in, load = chipTwo, address = address[0..11], out = chipTwoOut);
+    RAM4K(in = in, load = chipThree, address = address[0..11], out = chipThreeOut);
+    RAM4K(in = in, load = chipFour, address = address[0..11], out = chipFourOut);
+
+    // Combinational logic to choose RAM4K to write to
+    DMux4Way(in = load, sel = address[12..13], a = chipOne, b = chipTwo,
+            c = chipThree, d = chipFour);
+
+    // Combinational logic to choose RAM4K to read from
+    Mux4Way16(a = chipOneOut, b = chipTwoOut, c = chipThreeOut, 
+            d = chipFourOut, sel = address[12..13], out = out);
 }

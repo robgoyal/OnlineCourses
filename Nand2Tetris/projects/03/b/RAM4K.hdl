@@ -15,5 +15,23 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    
+    // Initialize RAM512 Chips
+    RAM512(in = in, load = chipOne, address = address[0..8], out = chipOneOut);
+    RAM512(in = in, load = chipTwo, address = address[0..8], out = chipTwoOut);
+    RAM512(in = in, load = chipThree, address = address[0..8], out = chipThreeOut);
+    RAM512(in = in, load = chipFour, address = address[0..8], out = chipFourOut);
+    RAM512(in = in, load = chipFive, address = address[0..8], out = chipFiveOut);
+    RAM512(in = in, load = chipSix, address = address[0..8], out = chipSixOut);
+    RAM512(in = in, load = chipSeven, address = address[0..8], out = chipSevenOut);
+    RAM512(in = in, load = chipEight, address = address[0..8], out = chipEightOut);
+
+    // Combinational logic to choose RAM512 chip to write to
+    DMux8Way(in = load, sel = address[9..11], a = chipOne, b = chipTwo, c = chipThree,
+        d = chipFour, e = chipFive, f = chipSix, g = chipSeven, h = chipEight);
+
+    // Combinational logic to choose RAM512 chip to read from
+    Mux8Way16(a = chipOneOut, b = chipTwoOut, c = chipThreeOut, d = chipFourOut,
+        e = chipFiveOut, f = chipSixOut, g = chipSevenOut, h = chipEightOut,
+        sel = address[9..11], out = out);
 }

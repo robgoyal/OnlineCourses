@@ -16,5 +16,18 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    
+    // Register
+    Register(in = muxOUT, load = loadREG, out = loop, out = out);
+
+
+    // Determine if any control signals were set
+    Or(a = inc, b = load, out = incORload);
+    Or(a = incORload, b = reset, out = loadREG);
+
+    // Combinational logic to implement logic in topmost description
+    Inc16(in = loop, out = incremented);
+    Mux16(a = loop, b = incremented, sel = inc, out = muxONE);
+    Mux16(a = muxONE, b = in, sel = load, out = muxTWO);
+    Mux16(a = muxTWO, b = false, sel = reset, out = muxOUT);
 }

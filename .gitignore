@@ -2,3 +2,4 @@
 *.tex
 *.log
 *.dat
+__pycache__

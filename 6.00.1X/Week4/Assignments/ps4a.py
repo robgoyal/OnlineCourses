@@ -148,7 +148,15 @@ def updateHand(hand, word):
     hand: dictionary (string -> int)    
     returns: dictionary (string -> int)
     """
-    # TO DO ... <-- Remove this comment when you code this function
+    
+    # Copy dictionary to prevent side effects
+    remaining_letters = dict(hand)
+
+    # Update remaining letter in hand
+    for letter in word:
+        remaining_letters[letter] -= 1
+
+    return remaining_letters
 
 
 

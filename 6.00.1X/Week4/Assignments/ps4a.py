@@ -71,9 +71,15 @@ def getWordScore(word, n):
     n: integer (HAND_SIZE; i.e., hand size required for additional points)
     returns: int >= 0
     """
-    # TO DO ... <-- Remove this comment when you code this function
+    
+    # Calculate the score by mapping all of letters and multiplying by len of word
+    score = sum(map(lambda letter: SCRABBLE_LETTER_VALUES[letter], word)) * len(word)
 
+    # Check if bonus
+    if len(word) == n:
+        score += 50
 
+    return score
 
 #
 # Problem #2: Make sure you understand how this function works and what it does!

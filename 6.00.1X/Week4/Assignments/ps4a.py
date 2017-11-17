@@ -174,7 +174,16 @@ def isValidWord(word, hand, wordList):
     hand: dictionary (string -> int)
     wordList: list of lowercase strings
     """
-    # TO DO ... <-- Remove this comment when you code this function
+    
+    # Create frequency dictionary of word similar to hand 
+    word_freq = getFrequencyDict(word)
+
+    # Check if the frequency of letters in the word is at least the number
+    # of occurrences in hand
+    word_hand_compares = list(map(lambda x: word_freq[x] <= hand.get(x, 0), word_freq))
+
+    # Check if word is valid and word contained all letters in hand
+    return not(False in word_hand_compares) and (word in wordList)
 
 
 #
@@ -188,9 +197,10 @@ def calculateHandlen(hand):
     hand: dictionary (string-> int)
     returns: integer
     """
-    # TO DO... <-- Remove this comment when you code this function
 
-
+    # Sum all the values of the hand indicating frequency of each letter
+    letter_count = sum(list(map(lambda letter: hand[letter], hand)))
+    return letter_count
 
 def playHand(hand, wordList, n):
     """
@@ -270,5 +280,7 @@ def playGame(wordList):
 # Build data structures used for entire session and play game
 #
 if __name__ == '__main__':
-    wordList = loadWords()
-    playGame(wordList)
+    # wordList = loadWords()
+    # playGame(wordList)
+    test = getFrequencyDict('')
+    print(test)

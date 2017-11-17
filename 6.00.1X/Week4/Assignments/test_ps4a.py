@@ -12,7 +12,16 @@ def test_getWordScore():
     """
     failure=False
     # dictionary of words and scores
-    words = {("", 7):0, ("it", 7):4, ("was", 7):18, ("scored", 7):54, ("waybill", 7):155, ("outgnaw", 7):127, ("fork", 7):44, ("fork", 4):94}
+    words = {("", 7):0, 
+             ("it", 7):4, 
+             ("was", 7):18, 
+             ("scored", 7):54, 
+             ("waybill", 7):155, 
+             ("outgnaw", 7):127, 
+             ("fork", 7):44, 
+             ("fork", 4):94
+            }
+
     for (word, n) in words.keys():
         score = getWordScore(word, n)
         if score != words[(word, n)]:
@@ -179,6 +188,16 @@ def test_isValidWord(wordList):
         print("FAILURE: test_isValidWord()")
         print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
         print("\t(If this is the only failure, make sure isValidWord() isn't mutating its inputs)")
+        
+        failure = True        
+
+    # test 7
+    word = ""
+    hand = {'e':1, 'v':2, 'n':1, 'i':1, 'l':2}
+
+    if  isValidWord(word, hand, wordList):
+        print("FAILURE: test_isValidWord()")
+        print("\tExpected False, but got True for word: '" + word + "' and hand:", hand)
         
         failure = True        
 

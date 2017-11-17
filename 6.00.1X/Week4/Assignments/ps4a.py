@@ -1,4 +1,7 @@
-# The 6.00 Word Game
+# Name: ps4a.py
+# Authors: Robin Goyal, MIT Team
+# Last-Modified: November 17, 2017
+# Purpose: Play a word game similar to scrabble
 
 import random
 import string
@@ -286,18 +289,43 @@ def playGame(wordList):
  
     2) When done playing the hand, repeat from step 1    
     """
-    # TO DO ... <-- Remove this comment when you code this function
-    print("playGame not yet implemented.") # <-- Remove this line when you code the function
-   
+    
+    # Initialize variable to hold hand size
+    n = HAND_SIZE
 
+    # Initialize hand to None in case user asks to replace hand
+    hand = None
 
+    while True:
+
+        # Get user input
+        user_input = input("Enter n to deal a new hand, r to replay the last hand or e to end the game: ")
+
+        # Check if user wants to play new hand 
+        if user_input == 'n':
+            hand = dealHand(n)
+            playHand(hand, wordList, n)
+
+        # Check if user wants to replace previous hand
+        elif user_input == 'r':
+            if hand == None:
+                print("You have not played a hand yet. Please play a new hand first!")
+            else:
+                playHand(hand, wordList, n)
+        
+        # Check if user wants to exit the command
+        elif user_input == "e":
+            break
+
+        # Inform user of invalid command
+        else:
+            print("Invalid command.")
+
+        print()
 
 #
 # Build data structures used for entire session and play game
 #
 if __name__ == '__main__':
     wordList = loadWords()
-    #playGame(wordList)
-
-    playHand({'n':1, 'e':1, 't':1, 'a':1, 'r':1, 'i':2}, wordList, 7)
-    
+    playGame(wordList)

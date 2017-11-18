@@ -1,3 +1,8 @@
+# Name: ps4b.py 
+# Author: Robin Goyal
+# Last-Modified: November 17, 2017
+# Purpose: Play the word game with a computer
+
 from ps4a import *
 import time
 
@@ -125,8 +130,6 @@ def playGame(wordList):
 
     wordList: list (string)
     """
-    # TO DO... <-- Remove this comment when you code this function
-    print("playGame not yet implemented.") # <-- Remove this when you code this function
 
     # Initialize variables
     n = HAND_SIZE
@@ -134,43 +137,39 @@ def playGame(wordList):
 
     while True:
 
+        # Get user input for playing hand or ending game
         user_input = input("Enter n to deal a new hand, r to replay the last hand, or e to end game: ")
 
         # Instantly break out of loop if user wants to end game
         if user_input == "e":
             break
 
-        elif user_input == 'r':
-            if hand == None:
-                    print("You have not played a hand yet. Please play a new hand first!")
-                    continue
+        elif user_input == 'r' and hand == None:
+            print("You have not played a hand yet. Please play a new hand first!")
+            continue
 
+        elif user_input == 'r' or user_input == 'n':
+
+            # Loop until user confirms if user or computer is playing
             player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
             while (player_input != 'c' and player_input != 'u'):
                 print("Invalid command.\n")
                 player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
             print()
 
-            if player_input == 'c':
-                compPlayHand(hand, wordList, n)
-            else:
+            # Replay hands for user or computer
+            if user_input == 'r' and player_input == 'u':
                 playHand(hand, wordList, n)
-
-        elif user_input == 'n':
-        # 
-            player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
-            while (player_input != 'c' and player_input != 'u'):
-                print("Invalid command.\n")
-                player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
-            print()
-
-            hand = dealHand(n)
-            if player_input == 'c':
+            elif user_input == 'r' and player_input == 'c':
                 compPlayHand(hand, wordList, n)
 
+            # Deal new hands for user or computer
             else:
-                playHand(hand, wordList, n)
-
+                hand = dealHand(n)
+                if player_input == 'c':
+                    compPlayHand(hand, wordList, n)
+                else:
+                    playHand(hand, wordList, n)
         else:
             print("Invalid command.")
 
@@ -181,5 +180,3 @@ def playGame(wordList):
 if __name__ == '__main__':
     wordList = loadWords()
     playGame(wordList)
-
-

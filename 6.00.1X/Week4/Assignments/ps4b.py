@@ -92,6 +92,7 @@ def compPlayHand(hand, wordList, n):
                 # Update hand and show the updated hand to the user
                 hand = updateHand(hand, word)
                 print()
+
     # Game is over (user entered a '.' or ran out of letters), so tell user the total score
     print('Total score: ' + str(totalScore) + ' points.')
 
@@ -127,8 +128,54 @@ def playGame(wordList):
     # TO DO... <-- Remove this comment when you code this function
     print("playGame not yet implemented.") # <-- Remove this when you code this function
 
-        
-#
+    # Initialize variables
+    n = HAND_SIZE
+    hand = None
+
+    while True:
+
+        user_input = input("Enter n to deal a new hand, r to replay the last hand, or e to end game: ")
+
+        # Instantly break out of loop if user wants to end game
+        if user_input == "e":
+            break
+
+        elif user_input == 'r':
+            if hand == None:
+                    print("You have not played a hand yet. Please play a new hand first!")
+                    continue
+
+            player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
+            while (player_input != 'c' and player_input != 'u'):
+                print("Invalid command.\n")
+                player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
+            print()
+
+            if player_input == 'c':
+                compPlayHand(hand, wordList, n)
+            else:
+                playHand(hand, wordList, n)
+
+        elif user_input == 'n':
+        # 
+            player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
+            while (player_input != 'c' and player_input != 'u'):
+                print("Invalid command.\n")
+                player_input = input("\nEnter u to have yourself play, c to have the computer play: ")
+            print()
+
+            hand = dealHand(n)
+            if player_input == 'c':
+                compPlayHand(hand, wordList, n)
+
+            else:
+                playHand(hand, wordList, n)
+
+        else:
+            print("Invalid command.")
+
+        print()
+#   
 # Build data structures used for entire session and play game
 #
 if __name__ == '__main__':

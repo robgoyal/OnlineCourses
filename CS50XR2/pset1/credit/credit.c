@@ -27,20 +27,18 @@ int main(void)
         card_number /= 10;
     }
 
-    // Length of card number is even
-    bool card_len_even = card_len % 2 == 0;
-
     // Calculate the sum specificed by luhn's algorithm
     int luhn_sum = 0;
 
     // Iterate over the individual digits of the card
     for (int i = 0; i < card_len; i++)
     {
-        if ((card_len_even && i % 2 == 0) || (!(card_len_even) && i % 2 == 1))
+        // Every other digit beginning from the end
+        if (i % 2 == 1)
         {
 
             // Add individual digits of the temporary number to luhn sum
-            int temp = 2 * card_digits[i];
+            int temp = 2 * card_digits[card_len - i - 1];
 
             while (temp > 0)
             {
@@ -51,7 +49,7 @@ int main(void)
 
         else
         {
-            luhn_sum += card_digits[i];
+            luhn_sum += card_digits[card_len - i - 1];
         }
     }
 

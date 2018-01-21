@@ -35,8 +35,6 @@ int main(int argc, string argv[])
     // Store length of all possible alphabetical characters
     int len = 52;
 
-    //int temp;
-
     // Possible length of password ranges from 1 to 5 characters
     for (int i = 1; i <= 5; i++)
     {
@@ -46,7 +44,6 @@ int main(int argc, string argv[])
         for (int j = 0; j < (int) pow(len, i); j++)
         {
             int temp = j;
-
 
             for (int k = 0; k < i; k++)
             {
@@ -75,5 +72,4 @@ int main(int argc, string argv[])
             }
         }
     }
-
 }

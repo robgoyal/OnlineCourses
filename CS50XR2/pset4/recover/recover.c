@@ -1,6 +1,6 @@
 /* Name: recover.c
    Author: Robin Goyal
-   Last-Modified: February 16, 2018
+   Last-Modified: February 17, 2018
    Purpose: Recover JPEG images from a memory card
 */
 
@@ -26,60 +26,51 @@ int main(int argc, char** argv)
         return 2;
     }
 
-    // Initialize file information
+    // Initialize output file jpeg information
     char filename[8];
     int filenumber = 0;
 
+    // Initialize block to read from input file
     unsigned char block[512];
 
-    while (true)
+    // Skip file data until reaching first JPEG
+    do
     {
         fread(block, sizeof(block), 1, card);
+    }
+    while(!(is_jpeg(block)));
 
-        if (is_jpeg(block))
+    // Loop until reaching EOF
+    while (!feof(card))
+    {
+        // Open file for writing
+        sprintf(filename, "%03d.jpg", filenumber);
+        FILE* jpeg = fopen(filename, "w");
+        if (jpeg == NULL)
         {
-            // Open file for writing
-            sprintf(filename, "%03d.jpg", filenumber);
-            FILE* jpeg = fopen(filename, "w");
-            if (jpeg == NULL)
-            {
-                fprintf(stderr, "Error: jpeg file could not be opened for writing. Exiting.\n");
-                return 2;
-            }
-
-            fwrite(block, sizeof(block), 1, jpeg);
-            while (1)
-            {
-                fread(block, sizeof(block), 1, card);
-
-                if (is_jpeg(block))
-                {
-                    fclose(jpeg);
-                    break;
-                }
-
-                fwrite(block, sizeof(block), 1, jpeg);
-            }
-
-            break;
+            fprintf(stderr, "Error: jpeg file could not be opened for writing. Exiting.\n");
+            return 2;
         }
+
+        // Write jpeg data until reaching next jpeg file or reaching EOF
+        do
+        {
+            fwrite(block, sizeof(block), 1, jpeg);
+            fread(block, sizeof(block), 1, card);
+        }
+        while (!feof(card) && !is_jpeg(block));
+
+        // Close output jpeg file
+        fclose(jpeg);
+
+        // Increment file number for next jpeg file
+        filenumber++;
     }
 
-    // fread(block, sizeof(block), 1, card);
-
-    // for (int i = 0; i < 1024; i++)
-    // {
-    //     printf("%i ", block[i]);
-    // }
-
-    printf("\n");
-
-    sprintf(filename, "%03d.jpg", filenumber);
-    printf("%s\n", filename);
+    // Close memory card
     fclose(card);
     return 0;
 }
-
 
 // Check if first set of bytes are of type JPEG
 bool is_jpeg(unsigned char block[512])

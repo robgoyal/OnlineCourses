@@ -1,6 +1,6 @@
 /* Name: dictionary.c
    Author: Robin Goyal and CS50
-   Last-Modified: February 22, 2018
+   Last-Modified: February 25, 2018
    Purpose: Implement a dictionary's functionality
 */
 
@@ -14,28 +14,28 @@
 // Returns true if word is in dictionary else false
 bool check(const char *word)
 {
-    // Creates variable to copy word
+    // Creates variable to copy word for lowercase
     int n = strlen(word);
-    char lower_copy[n + 1];
+    char copy[n + 1];
 
     // Converts word to lowercase
     for (int i = 0; i < n; i++)
     {
         if (isalpha(word[i]))
         {
-            lower_copy[i] = tolower(word[i]);
+            copy[i] = tolower(word[i]);
         }
         else
         {
-            lower_copy[i] = word[i];
+            copy[i] = word[i];
         }
     }
 
     // Null terminating character to copy
-    lower_copy[n] = '\0';
+    copy[n] = '\0';
 
     // Index for hashing
-    int index = hash(lower_copy);
+    int index = hash(copy);
 
     node *cursor = hashtable[index];
 
@@ -43,7 +43,7 @@ bool check(const char *word)
     while (cursor != NULL)
     {
         // Compare word in node and word to check
-        if (strcmp(cursor->word, lower_copy) == 0)
+        if (strcmp(cursor->word, copy) == 0)
         {
             return true;
         }
@@ -72,14 +72,14 @@ bool load(const char *dictionary)
     int index;
 
     // node
-    node *temp_node;
+    node *new_node;
 
     // Loop until reaching EOF
     while (fscanf(file, "%s", word) != EOF)
     {
         // Create temporary node
-        temp_node = malloc(sizeof(node));
-        if (temp_node == NULL)
+        new_node = malloc(sizeof(node));
+        if (new_node == NULL)
         {
             printf("Could not allocate memory for node.\n");
             unload();
@@ -87,8 +87,8 @@ bool load(const char *dictionary)
         }
 
         // Initialize fields for node
-        strcpy(temp_node->word, word);
-        temp_node->next = NULL;
+        strcpy(new_node->word, word);
+        new_node->next = NULL;
 
         // Store word at hashed index in hashtable
         index = hash(word);
@@ -96,14 +96,14 @@ bool load(const char *dictionary)
         // Check if hashtable at index contains no nodes
         if (!hashtable[index])
         {
-            hashtable[index] = temp_node;
+            hashtable[index] = new_node;
         }
 
         // Insert node at front of linked list
         else
         {
-            temp_node->next = hashtable[index];
-            hashtable[index] = temp_node;
+            new_node->next = hashtable[index];
+            hashtable[index] = new_node;
         }
     }
 
@@ -115,7 +115,7 @@ bool load(const char *dictionary)
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
 unsigned int size(void)
 {
-    int word_count = 0;
+    int num_words = 0;
     node *cursor;
 
     // Iterate over all linked lists in hashtable
@@ -126,12 +126,12 @@ unsigned int size(void)
         // Increment number of words in linked list
         while (cursor != NULL)
         {
-            word_count++;
+            num_words++;
             cursor = cursor->next;
         }
     }
 
-    return word_count;
+    return num_words;
 }
 
 // Unloads dictionary from memory, returning true if successful else false
@@ -161,12 +161,12 @@ bool unload(void)
 // https://www.reddit.com/r/cs50/comments/1x6vc8/pset6_trie_vs_hashtable/
 int hash(char *word)
 {
-    unsigned int count = 0;
+    unsigned int total = 0;
 
     //
     for (int i = 0, n = strlen(word); i < n; i++)
     {
-        count = (count << 2) ^ word[i];
+        total = (total << 2) ^ word[i];
     }
-    return count % HASHTABLE_SIZE;
+    return total % HASHTABLE_SIZE;
 }

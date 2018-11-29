@@ -187,3 +187,14 @@ The body was easy to write since we created examples explaining what the functio
 Run the program, ensure check-expects pass, and debug if any issues.
 
 ### How to Design Data
+
+Data definitions establish the interpretation between information and data. It assists us to understand how the data in the program can be interpreset as information in the program domain.
+
+Data Definition Steps:
+
+- Possible structure definition
+- Type comment 
+- Interpretation of data
+- Examples of data
+- Template for working on data of this type
+

